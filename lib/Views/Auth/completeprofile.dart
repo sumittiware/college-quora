@@ -14,6 +14,7 @@ import 'package:http_parser/http_parser.dart';
 // Project imports
 import 'package:quora/Configurations/apiConfig.dart';
 import 'package:quora/Services/authservices.dart';
+import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/Views/Home/homescreen.dart';
 import 'package:quora/styles/colors.dart';
 
@@ -31,24 +32,19 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
   String selectedYear = "None";
   String selectedBranch = "None";
   final _phonenocoltroller = TextEditingController();
-
-  _showCustomSnackBar(String message) {
-    Flushbar(
-        padding: EdgeInsets.all(10),
-        margin: EdgeInsets.all(12),
-        duration: Duration(seconds: 5),
-        borderRadius: 10,
-        message: message)
-      ..show(context);
-  }
+  final _collegeController = TextEditingController();
 
   _completeProfile() async {
     if (_phonenocoltroller.text == '' || _phonenocoltroller.text == null) {
-      _showCustomSnackBar("Enter contact details!!");
+      showCustomSnackBar(context, "Enter contact details!!");
+      return;
+    }
+    if (_collegeController.text == '' || _collegeController.text == null) {
+      showCustomSnackBar(context, "Enter College name!!");
       return;
     }
     if (_userImageFile == null && widget.profileUrl == null) {
-      _showCustomSnackBar("Add profile image!!");
+      showCustomSnackBar(context, "Add profile image!!");
       return;
     }
     setState(() {
@@ -59,7 +55,7 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
     // print(user.userID);
     // print(user.token);
     final url = API().getUrl(endpoint: "user/createProfile/${user.userID}");
-    String filename = _userImageFile.path;
+    String filename = _userImageFile.path ?? null;
     final mimeTypeData =
         lookupMimeType(filename, headerBytes: [0xFF, 0xD8]).split('/');
 
@@ -79,7 +75,7 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
       isSubmitting = false;
     });
     final resp = json.decode(response.body);
-    _showCustomSnackBar(resp['message']);
+    showCustomSnackBar(context, resp['message']);
     print(resp['message']);
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
       return HomeScreen();
@@ -169,6 +165,19 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
                         prefixText: "+91",
                         border: UnderlineInputBorder(),
                         labelText: "Contact",
+                        labelStyle:
+                            TextStyle(color: AppColors.orange, fontSize: 17)),
+                  ),
+                  TextField(
+                    controller: _collegeController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.violet)),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.orange)),
+                        border: UnderlineInputBorder(),
+                        labelText: "College",
                         labelStyle:
                             TextStyle(color: AppColors.orange, fontSize: 17)),
                   ),

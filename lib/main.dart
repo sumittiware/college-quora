@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:quora/Providers/appproviders.dart';
+import 'package:quora/Providers/userProvider.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Auth/completeprofile.dart';
 import 'package:quora/Views/Auth/signin.dart';
 import 'package:quora/Views/Auth/signup.dart';
+import 'package:quora/Views/Common/tabscreen.dart';
+import 'package:quora/styles/colors.dart';
 
 import 'Views/EditorScreen/texteditor.dart';
 
@@ -16,14 +20,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider.value(value: Auth())],
+      providers: [
+        ChangeNotifierProvider.value(value: Auth()),
+        ChangeNotifierProvider.value(value: AppProviders()),
+        ChangeNotifierProvider.value(value: UserProvider())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Quora',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: Colors.orange,
         ),
-        home: SignUPScreen(),
+        home: TabScreen(),
         // home: FutureBuilder(
         //     future: Provider.of<Auth>(context).tryAutoLogin(),
         //     builder: (context, snapshot) {
