@@ -1,6 +1,7 @@
 class User {
   String id;
   String username;
+  String college;
   String branch;
   String year;
   String email;
@@ -13,6 +14,7 @@ class User {
   User(
       {this.id,
       this.username,
+      this.college,
       this.branch,
       this.year,
       this.email,

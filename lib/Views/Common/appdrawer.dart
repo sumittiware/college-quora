@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:quora/Views/Home/homescreen.dart';
+import 'package:provider/provider.dart';
+import 'package:quora/Configurations/sharing.dart';
+import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Profile/profilepage.dart';
 import 'package:quora/styles/colors.dart';
 
@@ -66,12 +68,39 @@ class AppDrawer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text("Are you sure ?"),
+                              content: Text("Do you want to log-out?"),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context)
+                                          .pushReplacementNamed('/');
+                                      Provider.of<Auth>(context, listen: false)
+                                          .logout();
+                                    },
+                                    child: Text("Yes")),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("No")),
+                              ],
+                            );
+                          });
+                    },
                     icon: Icon(Icons.logout, color: AppColors.violet),
                     label: Text("Logout",
                         style: TextStyle(color: AppColors.violet))),
                 TextButton.icon(
-                    onPressed: () {},
+                    onPressed: () {
+                      shareApp();
+                    },
                     icon: Icon(Icons.share_outlined, color: AppColors.violet),
                     label: Text(
                       "Share",

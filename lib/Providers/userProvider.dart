@@ -19,12 +19,26 @@ class UserProvider with ChangeNotifier {
 
   Future<User> getUser(Auth authdata) async {
     try {
-      final url = API().getUrl(endpoint: '');
+      final url = API().getUrl(endpoint: 'user/getUser/${authdata.userID}');
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
       final result = json.decode(response.body);
       if (result['error'] == null) {
-        return result;
+        final imageUrl = result['user']['profileImage']['path'];
+        final user = User(
+            college: result['user']['college'],
+            branch: result['user']['branch'],
+            year: result['user']['year'],
+            contact: result['user']['contact'],
+            username: result['user']['username'],
+            email: result['user']['email'],
+            emailverified: result['user']['emailVerify'],
+            numberverified: result['user']['numberVerify'],
+            createdDate: result['user']['createdAt'],
+            imageURl: imageUrl);
+        _appuser = user;
+        notifyListeners();
+        return user;
       } else {
         throw result['error'];
       }
@@ -35,10 +49,10 @@ class UserProvider with ChangeNotifier {
   }
 
   Future<String> updateUser(Auth authdata, File userimage, String username,
-      String selectedBranch, String selectedYear) async {
+      String selectedBranch, String selectedYear, String collegename) async {
     try {
       final url =
-          API().getUrl(endpoint: "user/createProfile/${authdata.userID}");
+          API().getUrl(endpoint: "user/updateProfile/${authdata.userID}");
       String filename = userimage.path ?? null;
       final mimeTypeData =
           lookupMimeType(filename, headerBytes: [0xFF, 0xD8]).split('/');
@@ -49,6 +63,7 @@ class UserProvider with ChangeNotifier {
       request.fields['username'] = username;
       request.fields['branch'] = selectedBranch;
       request.fields['year'] = selectedYear;
+      request.fields['college'] = collegename;
       request.headers.addAll({
         "Content-type": "multipart/form-data",
         'Authorization': 'Bearer ${authdata.token}'

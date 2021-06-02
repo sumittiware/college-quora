@@ -15,6 +15,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:quora/Configurations/apiConfig.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Common/showmessage.dart';
+import 'package:quora/Views/Common/tabscreen.dart';
 import 'package:quora/Views/Home/homescreen.dart';
 import 'package:quora/styles/colors.dart';
 
@@ -65,6 +66,7 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
     request.fields['branch'] = selectedBranch;
     request.fields['year'] = selectedYear;
     request.fields['contact'] = _phonenocoltroller.text;
+    request.fields['college'] = _collegeController.text;
     request.headers.addAll({
       "Content-type": "multipart/form-data",
       'Authorization': 'Bearer ${user.token}'
@@ -78,7 +80,7 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
     showCustomSnackBar(context, resp['message']);
     print(resp['message']);
     Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return HomeScreen();
+      return TabScreen();
     }));
   }
 

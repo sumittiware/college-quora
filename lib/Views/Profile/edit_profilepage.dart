@@ -4,11 +4,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:quora/Configurations/apiConfig.dart';
+import 'package:quora/Models/user.dart';
 import 'package:quora/Providers/userProvider.dart';
-
 import 'package:quora/Services/authservices.dart';
+import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/styles/colors.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -17,14 +16,16 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  bool userloading = true;
+  bool userloading = false; //only for now
   bool isSubmitting = false;
   File _userImageFile;
   String selectedYear = "None";
   String selectedBranch = "None";
   final _nameController = TextEditingController();
   final _collegeController = TextEditingController();
+  String imageUrl;
   Auth user;
+  User appuser;
 
   void _pickImage() async {
     final image = ImagePicker();
@@ -34,14 +35,54 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
   }
 
+  _updateUser() {
+    if (_nameController.text == '' || _nameController.text == null) {
+      showCustomSnackBar(context, "Enter Username");
+      return;
+    }
+    if (_collegeController.text == '' || _collegeController.text == null) {
+      showCustomSnackBar(context, "Enter College name!!");
+      return;
+    }
+    if (_userImageFile == null && appuser.imageURl == null) {
+      showCustomSnackBar(context, "Add profile image!!");
+      return;
+    }
+    setState(() {
+      isSubmitting = true;
+    });
+    Provider.of<UserProvider>(context, listen: false)
+        .updateUser(user, _userImageFile, _nameController.text, selectedBranch,
+            selectedYear, _collegeController.text)
+        .then((value) {
+      setState(() {
+        isSubmitting = false;
+      });
+      showCustomSnackBar(context, value);
+    }).catchError((error) {
+      setState(() {
+        isSubmitting = false;
+      });
+      showCustomSnackBar(context, error);
+    });
+  }
+
   @override
   void initState() {
     user = Provider.of<Auth>(context, listen: false);
     Provider.of<UserProvider>(context, listen: false)
         .getUser(user)
-        .then((userdata) {})
-        .catchError((error) {
-      print(error);
+        .then((userdata) {
+      setState(() {
+        appuser = userdata;
+        _collegeController.text = appuser.college;
+        _nameController.text = appuser.username;
+        selectedYear = appuser.year;
+        selectedBranch = appuser.branch;
+        imageUrl = appuser.imageURl;
+      });
+    }).catchError((error) {
+      showCustomSnackBar(context, error);
     });
     super.initState();
   }
@@ -86,8 +127,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             image: DecorationImage(
                                 image: (_userImageFile != null)
                                     ? FileImage(_userImageFile)
-                                    : AssetImage(
-                                        'assets/images/profileplaceholder.png'),
+                                    : (imageUrl != null)
+                                        ? NetworkImage(imageUrl)
+                                        : AssetImage(
+                                            'assets/images/profileplaceholder.png'),
                                 fit: BoxFit.cover),
                             borderRadius: BorderRadius.circular(75),
                             border: Border.all(color: AppColors.violet)),
@@ -218,7 +261,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       width: 120,
                       child: ElevatedButton(
                         onPressed: () {
-                          // _completeProfile();
+                          _updateUser();
                         },
                         child: (!isSubmitting)
                             ? Text("Submit")
