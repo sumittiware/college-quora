@@ -7,13 +7,20 @@ class AppError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SvgPicture.asset(
           'assets/svgs/error.svg',
-          height: 90,
-          width: 90,
+          height: 120,
+          width: 120,
         ),
-        Text(error ?? "Something went wrong!!!")
+        SizedBox(
+          height: 20,
+        ),
+        Text(
+          error ?? "Something went wrong!!!",
+          style: TextStyle(fontSize: 17),
+        )
       ],
     );
   }

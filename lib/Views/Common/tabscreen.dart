@@ -2,23 +2,37 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_quill/models/documents/nodes/container.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:quora/Models/user.dart';
 import 'package:quora/Providers/appproviders.dart';
+import 'package:quora/Providers/filter.dart';
+import 'package:quora/Providers/userProvider.dart';
+import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Chat/chatscreen.dart';
 import 'package:quora/Views/Common/appdrawer.dart';
 import 'package:quora/Views/EditorScreen/texteditor.dart';
 import 'package:quora/Views/Home/homescreen.dart';
 import 'package:quora/Views/Notifications/notificationscreen.dart';
 import 'package:provider/provider.dart';
+import 'package:quora/extras/contextkeeper.dart';
 import 'package:quora/styles/colors.dart';
-
 import 'appbar.dart';
 
 class TabScreen extends StatefulWidget {
+  static const routename = '/tabs';
   @override
   _TabScreenState createState() => _TabScreenState();
 }
 
 class _TabScreenState extends State<TabScreen> {
+  Auth authdata;
+  @override
+  void initState() {
+    authdata = Provider.of<Auth>(context, listen: false);
+    Provider.of<Filter>(context, listen: false).fetchTags(authdata);
+    Provider.of<UserProvider>(context, listen: false).getUser(authdata);
+    super.initState();
+  }
+
   PersistentTabController _controller =
       PersistentTabController(initialIndex: 0);
 
@@ -51,6 +65,7 @@ class _TabScreenState extends State<TabScreen> {
   @override
   Widget build(BuildContext context) {
     final _deviceSize = MediaQuery.of(context).size;
+    ContextKeeper().init(context);
     return Scaffold(
       appBar: PreferredSize(
         child: CustomAppBar(
@@ -85,7 +100,8 @@ class _TabScreenState extends State<TabScreen> {
             hideNavigationBarWhenKeyboardShows:
                 true, // Recommended to set 'resizeToAvoidBottomInset' as true while using this argument. Default is true.
             decoration: NavBarDecoration(
-              borderRadius: BorderRadius.circular(10.0),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16), topRight: Radius.circular(16)),
               colorBehindNavBar: Colors.white,
             ),
             popAllScreensOnTapOfSelectedTab: true,

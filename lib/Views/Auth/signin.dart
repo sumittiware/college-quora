@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Auth/completeprofile.dart';
 import 'package:quora/Views/Auth/signup.dart';
+import 'package:quora/Views/Common/tabscreen.dart';
 import 'package:quora/Views/Home/homescreen.dart';
 import 'package:quora/styles/colors.dart';
 
@@ -54,7 +55,7 @@ class _SignInScreenState extends State<SignInScreen> {
           _showCustomSnackBar(value[0]);
           Navigator.of(context)
               .pushReplacement(MaterialPageRoute(builder: (context) {
-            return (value[1]) ? HomeScreen() : CompleteYourProfile(null);
+            return (value[1]) ? TabScreen() : CompleteYourProfile(null);
           }));
         }).catchError((msg) {
           setState(() {

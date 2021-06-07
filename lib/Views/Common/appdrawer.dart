@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quora/Configurations/sharing.dart';
+import 'package:quora/Providers/userProvider.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Profile/profilepage.dart';
 import 'package:quora/styles/colors.dart';
@@ -8,6 +9,7 @@ import 'package:quora/styles/colors.dart';
 class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context).appuser;
     final _deviceSize = MediaQuery.of(context).size;
     return Drawer(
       child: SizedBox(
@@ -29,10 +31,12 @@ class AppDrawer extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 60,
-                      backgroundImage: AssetImage('assets/images/user.jpg'),
+                      backgroundImage: (user.imageURl != null)
+                          ? NetworkImage(user.imageURl)
+                          : AssetImage('assets/images/user.jpg'),
                     ),
                     Text(
-                      "Sumit Tiware",
+                      user.username,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )

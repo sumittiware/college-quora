@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:quora/Providers/appproviders.dart';
 import 'package:quora/Providers/filter.dart';
+import 'package:quora/Providers/panelcontroller.dart';
 import 'package:quora/Providers/userProvider.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Auth/completeprofile.dart';
@@ -12,6 +13,7 @@ import 'package:quora/Views/Splash/splashscreen.dart';
 import 'package:quora/styles/colors.dart';
 
 import 'Providers/feedsprovider.dart';
+import 'Views/EditorScreen/editans.dart';
 import 'Views/EditorScreen/texteditor.dart';
 
 void main() {
@@ -25,6 +27,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: Auth()),
+        ChangeNotifierProvider.value(value: PanelController()),
         ChangeNotifierProvider.value(value: MyFeeds()),
         ChangeNotifierProvider.value(value: Filter()),
         ChangeNotifierProvider.value(value: AppProviders()),
@@ -48,6 +51,9 @@ class MyApp extends StatelessWidget {
                         : SignUPScreen();
                   }),
           routes: {
+            TabScreen.routename: (ctx) => TabScreen(),
+            EditQuestionPage.routename: (context) => EditQuestionPage(),
+            // "/edit": (ctx) => EditQuestionPage(),
             "/editor": (context) => EditorPage(),
             SignUPScreen.routename: (ctx) => SignUPScreen(),
             SignInScreen.routename: (ctx) => SignInScreen(),

@@ -1,5 +1,7 @@
 import 'dart:convert'; // access to jsonEncode()
 import 'dart:io';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/widgets/controller.dart';
@@ -15,12 +17,16 @@ import 'package:quora/Views/EditorScreen/Widgets/dialog.dart';
 import 'package:quora/styles/colors.dart';
 import 'package:http/http.dart' as http;
 
-class EditorPage extends StatefulWidget {
+class EditQuestionPage extends StatefulWidget {
+  final String title;
+  final quill.Delta delta;
+  EditQuestionPage({this.title, this.delta});
+  static const routename = '/editquestion';
   @override
-  EditorPageState createState() => EditorPageState();
+  EditQuestionPageState createState() => EditQuestionPageState();
 }
 
-class EditorPageState extends State<EditorPage> {
+class EditQuestionPageState extends State<EditQuestionPage> {
   final _titlecontroller = TextEditingController();
   QuillController _controller = QuillController.basic();
   Auth authdata;
@@ -59,6 +65,10 @@ class EditorPageState extends State<EditorPage> {
 
   void initState() {
     authdata = Provider.of<Auth>(context, listen: false);
+    _titlecontroller.text = widget.title;
+    _controller = quill.QuillController(
+        selection: TextSelection.collapsed(offset: 1),
+        document: quill.Document.fromDelta(widget.delta));
     super.initState();
   }
 
@@ -72,85 +82,85 @@ class EditorPageState extends State<EditorPage> {
         });
   }
 
-  _submitQuestion() async {
-    final tags = Provider.of<Filter>(context, listen: false).tags;
-    setState(() {
-      sending = true;
-    });
-    // print(_controller.document.toDelta().toString());
-    try {
-      final url =
-          API().getUrl(endpoint: 'user/createQuestion/${authdata.userID}');
-      final request = await http.post(url,
-          body: json.encode(
-            {
-              'title': _titlecontroller.text,
-              'body': _controller.document.toDelta(),
-              'tags': tags
-            },
-          ),
-          headers: {
-            "Content-type": "Application/json",
-            'Authorization': 'Bearer ${authdata.token}'
-          });
+  // _submitQuestion() async {
+  //   final tags = Provider.of<Filter>(context, listen: false).tags;
+  //   setState(() {
+  //     sending = true;
+  //   });
+  //   // print(_controller.document.toDelta().toString());
+  //   try {
+  //     final url =
+  //         API().getUrl(endpoint: 'user/createQuestion/${authdata.userID}');
+  //     final request = await http.post(url,
+  //         body: json.encode(
+  //           {
+  //             'title': _titlecontroller.text,
+  //             'body': _controller.document.toDelta(),
+  //             'tags': tags
+  //           },
+  //         ),
+  //         headers: {
+  //           "Content-type": "Application/json",
+  //           'Authorization': 'Bearer ${authdata.token}'
+  //         });
 
-      final resp = json.decode(request.body);
-      print(resp.toString());
-      final id = resp['questionId'];
-      final imagesend = API()
-          .getUrl(endpoint: 'user/questionImagesUpload/${authdata.userID}/$id');
-      if (resp['error'] == null) {
-        if (_uploadFiles.length != 0) {
-          final imagereq = http.MultipartRequest('Post', imagesend);
-          for (int i = 0; i < _uploadFiles.length; i++) {
-            String filename = _uploadFiles[i].path ?? null;
-            final mimeTypeData =
-                lookupMimeType(filename, headerBytes: [0xFF, 0xD8]).split('/');
-            imagereq.files.add(await http.MultipartFile.fromPath(
-                'image', filename,
-                contentType: MediaType(mimeTypeData[0], mimeTypeData[1])));
-          }
-          imagereq.headers.addAll({
-            "Content-type": "multipart/form-data",
-            "Authorization": 'Bearer ${authdata.token}'
-          });
-          final res = await imagereq.send();
-          var response = await http.Response.fromStream(res);
-          final respimg = json.decode(response.body);
-          print(respimg.toString());
-          if (respimg['error'] == null) {
-            setState(() {
-              sending = false;
-            });
-            showCustomSnackBar(context, "Question Created Successfully");
-            return respimg['questionId'].toString();
-          } else {
-            setState(() {
-              sending = false;
-            });
-            showCustomSnackBar(context, resp['message']);
-            throw respimg['message'];
-          }
-        }
-        setState(() {
-          sending = false;
-        });
-        showCustomSnackBar(context, "Question Created Successfully!!");
-        return resp['message'];
-      } else {
-        setState(() {
-          sending = false;
-        });
-        showCustomSnackBar(context, resp['message']);
-        throw resp['message'];
-      }
-    } catch (e) {
-      setState(() {
-        sending = false;
-      });
-      showCustomSnackBar(context, e.toString());
-    }
-  }
+  //     final resp = json.decode(request.body);
+  //     print(resp.toString());
+  //     final id = resp['questionId'];
+  //     final imagesend = API()
+  //         .getUrl(endpoint: 'user/questionImagesUpload/${authdata.userID}/$id');
+  //     if (resp['error'] == null) {
+  //       if (_uploadFiles.length != 0) {
+  //         final imagereq = http.MultipartRequest('Post', imagesend);
+  //         for (int i = 0; i < _uploadFiles.length; i++) {
+  //           String filename = _uploadFiles[i].path ?? null;
+  //           final mimeTypeData =
+  //               lookupMimeType(filename, headerBytes: [0xFF, 0xD8]).split('/');
+  //           imagereq.files.add(await http.MultipartFile.fromPath(
+  //               'image', filename,
+  //               contentType: MediaType(mimeTypeData[0], mimeTypeData[1])));
+  //         }
+  //         imagereq.headers.addAll({
+  //           "Content-type": "multipart/form-data",
+  //           "Authorization": 'Bearer ${authdata.token}'
+  //         });
+  //         final res = await imagereq.send();
+  //         var response = await http.Response.fromStream(res);
+  //         final respimg = json.decode(response.body);
+  //         print(respimg.toString());
+  //         if (respimg['error'] == null) {
+  //           setState(() {
+  //             sending = false;
+  //           });
+  //           showCustomSnackBar(context, "Question Created Successfully");
+  //           return respimg['questionId'].toString();
+  //         } else {
+  //           setState(() {
+  //             sending = false;
+  //           });
+  //           showCustomSnackBar(context, resp['message']);
+  //           throw respimg['message'];
+  //         }
+  //       }
+  //       setState(() {
+  //         sending = false;
+  //       });
+  //       showCustomSnackBar(context, "Question Created Successfully!!");
+  //       return resp['message'];
+  //     } else {
+  //       setState(() {
+  //         sending = false;
+  //       });
+  //       showCustomSnackBar(context, resp['message']);
+  //       throw resp['message'];
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       sending = false;
+  //     });
+  //     showCustomSnackBar(context, e.toString());
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +173,7 @@ class EditorPageState extends State<EditorPage> {
               Navigator.pop(context);
             },
           ),
-          title: Text("Ask Question"),
+          title: Text("Edit Question"),
           backgroundColor: AppColors.orange,
         ),
         body: Padding(
@@ -232,7 +242,8 @@ class EditorPageState extends State<EditorPage> {
                                     .length ==
                                 0)
                             ? _selectTags(context, _deviceSize)
-                            : _submitQuestion()
+                            : () {}
+                        // : _submitQuestion()
                         : null;
                   },
                   style: ElevatedButton.styleFrom(

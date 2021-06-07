@@ -17,11 +17,11 @@ class MyFeeds with ChangeNotifier {
   Future<Question> fetchFeeds(Auth authdata) async {
     try {
       final url =
-          API().getUrl(endpoint: 'user/getQuestion/60b4f7803075ea1bc4b3d826');
+          API().getUrl(endpoint: 'user/getQuestion/60b9e8e1557cc135305b6e6f');
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
       final result = json.decode(response.body);
-
+      print(result);
       Question question;
       if (result['error'] == null) {
         try {
@@ -35,7 +35,6 @@ class MyFeeds with ChangeNotifier {
           throw e.toString();
         }
       } else {
-        print(result['message']);
         throw result['message'];
       }
     } catch (e) {
