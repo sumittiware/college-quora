@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quora/Providers/appproviders.dart';
+import 'package:quora/Providers/filter.dart';
+import 'package:quora/Views/Home/filterscreen.dart';
 import 'package:quora/styles/colors.dart';
 import 'package:provider/provider.dart';
 
@@ -60,16 +62,20 @@ class CustomAppBar extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                        width: _deviceSize.width * 0.1,
-                        height: 45,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white),
-                        child: Icon(
-                          Icons.filter_list_rounded,
-                          color: AppColors.violet,
-                        )),
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => FilterScreen())),
+                      child: Container(
+                          width: _deviceSize.width * 0.1,
+                          height: 45,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white),
+                          child: Icon(
+                            Icons.filter_list_rounded,
+                            color: AppColors.violet,
+                          )),
+                    ),
                   )
                 ],
               ))

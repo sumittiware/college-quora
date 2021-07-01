@@ -130,16 +130,20 @@ class _ProfilePageState extends State<ProfilePage> {
                                 height: 4,
                               ),
                               _infoTile(Icons.location_on_outlined,
-                                  snapshot.data.college),
+                                  snapshot.data.college, null),
                               _infoTile(Icons.h_plus_mobiledata_outlined,
-                                  snapshot.data.branch),
-                              _infoTile(Icons.group, snapshot.data.year),
-                              _infoTile(Icons.contact_phone_outlined,
-                                  snapshot.data.contact),
-                              _infoTile(Icons.contact_mail_outlined,
-                                  snapshot.data.email),
+                                  snapshot.data.branch, null),
+                              _infoTile(Icons.group, snapshot.data.year, null),
+                              _infoTile(
+                                  Icons.contact_phone_outlined,
+                                  snapshot.data.contact,
+                                  snapshot.data.numberverified),
+                              _infoTile(
+                                  Icons.contact_mail_outlined,
+                                  snapshot.data.email,
+                                  snapshot.data.emailverified),
                               _infoTile(Icons.calendar_today_outlined,
-                                  snapshot.data.createdDate),
+                                  snapshot.data.createdDate, null),
                               SizedBox(
                                 height: 8,
                               ),
@@ -167,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _infoTile(IconData icon, String data) {
+  Widget _infoTile(IconData icon, String data, bool verification) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Row(
@@ -177,6 +181,17 @@ class _ProfilePageState extends State<ProfilePage> {
             width: 8,
           ),
           Text(data ?? "none"),
+          Spacer(),
+          (verification != null)
+              ? ((verification)
+                  ? Icon(
+                      Icons.verified,
+                      color: Colors.green,
+                    )
+                  : Text(
+                      "Verify",
+                    ))
+              : Container()
         ],
       ),
     );

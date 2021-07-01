@@ -23,8 +23,9 @@ class UserProvider with ChangeNotifier {
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
       final result = json.decode(response.body);
+      print(result.toString());
       if (result['error'] == null) {
-        final imageUrl = result['user']['profileImage']['path'];
+        final imageUrl = result['user']['profileImage']['path'] ?? null;
         final user = User(
             college: result['user']['college'],
             branch: result['user']['branch'],
@@ -43,7 +44,7 @@ class UserProvider with ChangeNotifier {
         throw result['error'];
       }
     } catch (e) {
-      print("Error : " + e.toString());
+      // print("Error : " + e.toString());
       throw e.toString();
     }
   }

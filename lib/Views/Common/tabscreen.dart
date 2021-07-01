@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_quill/models/documents/nodes/container.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
-import 'package:quora/Models/user.dart';
 import 'package:quora/Providers/appproviders.dart';
 import 'package:quora/Providers/filter.dart';
 import 'package:quora/Providers/userProvider.dart';
@@ -122,6 +121,7 @@ class _TabScreenState extends State<TabScreen> {
           Positioned(
             child: ((Provider.of<AppProviders>(context).currentIndex == 0)
                 ? FloatingActionButton(
+                    heroTag: "btn1",
                     backgroundColor: AppColors.violet,
                     child: Icon(
                       Icons.add,

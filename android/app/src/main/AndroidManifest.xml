@@ -4,6 +4,7 @@
    <application
         android:label="quora"
         android:usesCleartextTraffic="true"
+       
         android:icon="@mipmap/ic_launcher">
         <activity android:name="com.college.quora.CallbackActivity" >
                 <intent-filter android:label="quora">

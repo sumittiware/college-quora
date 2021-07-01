@@ -8,7 +8,8 @@ import 'package:quora/Services/authservices.dart';
 class Filter with ChangeNotifier {
   List<dynamic> _filters = [];
   List<String> _selectedFilter = [];
-  List<String> _selectedaTags = [];
+  List<dynamic> _selectedaTags = [];
+  List<String> _createdTags = [];
 
   List<String> get filters {
     return [..._filters];
@@ -20,6 +21,10 @@ class Filter with ChangeNotifier {
 
   List<String> get tags {
     return [..._selectedaTags];
+  }
+
+  List<String> get createdTags {
+    return [..._createdTags];
   }
 
   Future<void> fetchTags(Auth authdata) async {
@@ -49,9 +54,23 @@ class Filter with ChangeNotifier {
     notifyListeners();
   }
 
-  setTags(List<String> tags) {
+  setTags(List<dynamic> tags) {
     _selectedaTags.clear();
     _selectedaTags = tags;
+    print(_selectedaTags);
+    notifyListeners();
+  }
+
+  clearTags() {
+    _selectedaTags.clear();
+    notifyListeners();
+  }
+
+  createTag(String newtags) {
+    _createdTags = newtags.split(",");
+    _createdTags.forEach((element) {
+      if (!_filters.contains(element)) _filters.add(element.trim());
+    });
     notifyListeners();
   }
 }

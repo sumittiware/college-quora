@@ -1,19 +1,23 @@
 import 'dart:convert'; // access to jsonEncode()
 import 'dart:io';
+import 'package:flutter_quill/widgets/editor.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/widgets/controller.dart';
-import 'package:flutter_quill/widgets/editor.dart';
 import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
 import 'package:quora/Configurations/apiConfig.dart';
+import 'package:quora/Configurations/string.dart';
 import 'package:quora/Providers/filter.dart';
+import 'package:quora/Providers/userProvider.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/Views/EditorScreen/Widgets/dialog.dart';
+import 'package:quora/main.dart';
 import 'package:quora/styles/colors.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 
 class EditorPage extends StatefulWidget {
   @override
@@ -73,7 +77,14 @@ class EditorPageState extends State<EditorPage> {
   }
 
   _submitQuestion() async {
-    final tags = Provider.of<Filter>(context, listen: false).tags;
+    final filters = Provider.of<Filter>(context, listen: false);
+    final user = Provider.of<UserProvider>(context, listen: false).appuser;
+    socket.emit("addTag", {
+      "username": user.username,
+      "profileImage": user.imageURl ?? null,
+      "tags": filters.createdTags
+    });
+
     setState(() {
       sending = true;
     });
@@ -86,19 +97,21 @@ class EditorPageState extends State<EditorPage> {
             {
               'title': _titlecontroller.text,
               'body': _controller.document.toDelta(),
-              'tags': tags
+              'tags': filters.tags
             },
           ),
           headers: {
             "Content-type": "Application/json",
             'Authorization': 'Bearer ${authdata.token}'
           });
+      filters.clearTags();
 
       final resp = json.decode(request.body);
       print(resp.toString());
       final id = resp['questionId'];
-      final imagesend = API()
-          .getUrl(endpoint: 'user/questionImagesUpload/${authdata.userID}/$id');
+      final imagesend = API().getUrl(
+          endpoint:
+              'user/questionImagesUpload/${authdata.userID}/$id?mode="create"');
       if (resp['error'] == null) {
         if (_uploadFiles.length != 0) {
           final imagereq = http.MultipartRequest('Post', imagesend);
@@ -202,10 +215,11 @@ class EditorPageState extends State<EditorPage> {
                 child: Container(
                   decoration: BoxDecoration(border: Border.all(width: 1)),
                   child: QuillEditor.basic(
-                    autoFocus: true,
-                    controller: _controller,
-                    readOnly: false, // true for view only mode
-                  ),
+                      padding: EdgeInsets.all(8),
+                      autoFocus: false,
+                      controller: _controller,
+                      readOnly: false // true for view only mode
+                      ),
                 ),
               ),
               SizedBox(

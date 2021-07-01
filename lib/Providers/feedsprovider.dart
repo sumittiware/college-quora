@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:http/http.dart' as http;
 import 'package:quora/Configurations/apiConfig.dart';
+import 'package:quora/Configurations/string.dart';
 import 'package:quora/Models/question.dart';
 import 'package:quora/Services/authservices.dart';
 
@@ -17,7 +18,7 @@ class MyFeeds with ChangeNotifier {
   Future<Question> fetchFeeds(Auth authdata) async {
     try {
       final url =
-          API().getUrl(endpoint: 'user/getQuestion/60b9e8e1557cc135305b6e6f');
+          API().getUrl(endpoint: 'user/getQuestion/${authdata.userID}/$queId');
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
       final result = json.decode(response.body);
@@ -29,7 +30,10 @@ class MyFeeds with ChangeNotifier {
           result['question']['body'].forEach((element) {
             body.insert(element['insert'], element['attributes']);
           });
-          question = Question(title: result['question']['title'], body: body);
+          question = Question(
+              title: result['question']['title'],
+              body: body,
+              tags: result['question']['tags']);
           return question;
         } catch (e) {
           throw e.toString();
