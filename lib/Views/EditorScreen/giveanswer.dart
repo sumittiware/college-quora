@@ -25,20 +25,20 @@ class WriteAnswer extends StatefulWidget {
 
 class _WriteAnswerState extends State<WriteAnswer> {
   final _answerController = quill.QuillController.basic();
-  var validimages = ['png', 'jpg', 'jpeg'];
+
   List<File> _uploadFiles = [];
   bool sending = false;
   Auth authdata;
 
-  validateImage(File givenfile) {
+  var validimages = ['png', 'jpg', 'jpeg'];
+
+  validateImage(BuildContext context, File givenfile) {
     final image = File(givenfile.path);
     final bytes = image.readAsBytesSync().lengthInBytes;
     final mb = bytes / (1024 * 1024);
     String name = image.path.split('/').last;
     String end = name.split('.').last;
-    // print(end);
-    // print(mb);
-    if (mb > 2) {
+    if (mb > 1) {
       showCustomSnackBar(context, "File is to large!!");
       return false;
     }
@@ -50,11 +50,11 @@ class _WriteAnswerState extends State<WriteAnswer> {
   }
 
   Future<String> imgepick(File givenfile) async {
-    if (validateImage(givenfile)) {
+    if (validateImage(context, givenfile)) {
       _uploadFiles.add(givenfile);
       return givenfile.path;
     } else {
-      return "https://firebasestorage.googleapis.com/v0/b/news-app-bowe.appspot.com/o/source_image%2FIMG-20210531-WA0009.jpg?alt=media&token=c6325d45-9c0c-4b5f-a497-a8f9fa677b65";
+      return placeholderImage;
     }
   }
 
@@ -62,11 +62,10 @@ class _WriteAnswerState extends State<WriteAnswer> {
     setState(() {
       sending = true;
     });
-    print(_answerController.document.toDelta().toString());
     try {
       final url = API().getUrl(
           endpoint:
-              'user/createAnswer/${authdata.userID}/$queId?mode="create"');
+              'answer/createAnswer/${authdata.userID}/$queId?mode="create"');
       final request = await http.post(url,
           body: json.encode(
             {
@@ -79,13 +78,11 @@ class _WriteAnswerState extends State<WriteAnswer> {
           });
 
       final resp = json.decode(request.body);
-      print(resp.toString());
       final id = resp['answerId'];
       final imagesend = API().getUrl(
-          endpoint: 'user/answerImagesUpload/${authdata.userID}/$queId/$id');
+          endpoint: 'answer/answerImagesUpload/${authdata.userID}/$queId/$id');
       if (resp['error'] == null) {
         if (_uploadFiles.length != 0) {
-          print("object");
           final imagereq = http.MultipartRequest('Post', imagesend);
           for (int i = 0; i < _uploadFiles.length; i++) {
             String filename = _uploadFiles[i].path ?? null;
@@ -139,7 +136,6 @@ class _WriteAnswerState extends State<WriteAnswer> {
 
   void initState() {
     authdata = Provider.of<Auth>(context, listen: false);
-
     super.initState();
   }
 

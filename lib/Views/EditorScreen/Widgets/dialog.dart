@@ -68,7 +68,6 @@ class _MyDialogState extends State<MyDialog> {
                           onPressed: () {
                             filters.createTag(_newstagController.text);
                             _newstagController.clear();
-                            Navigator.pop(context);
                           },
                           child: Text("Add"))
                     ],

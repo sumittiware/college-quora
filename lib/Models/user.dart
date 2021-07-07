@@ -24,3 +24,14 @@ class User {
       this.numberverified,
       this.createdDate});
 }
+
+User userfromQNAJSON(Map<String, dynamic> json) {
+  print("Inside user json");
+  print(json.toString());
+  final user = User(
+    id: json['_id'] ?? "",
+    username: json['username'] ?? "",
+    imageURl: json['profileImage']['path'] ?? null,
+  );
+  return user;
+}

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/models/documents/document.dart';
 import 'package:http_parser/http_parser.dart';
@@ -17,10 +16,11 @@ import 'package:mime/mime.dart';
 import 'dart:convert';
 
 class UpdateAnswer extends StatefulWidget {
-  // const UpdateAnswer({ Key? key }) : super(key: key);
+  final String answerId;
   final String questionId;
   final String title;
-  UpdateAnswer({this.questionId, this.title});
+  final quill.Delta quilldata;
+  UpdateAnswer({this.answerId, this.questionId, this.title, this.quilldata});
   @override
   UpdateAnswerState createState() => UpdateAnswerState();
 }
@@ -58,7 +58,7 @@ class UpdateAnswerState extends State<UpdateAnswer> {
       _uploadFiles.add(givenfile);
       return givenfile.path;
     } else {
-      return "https://firebasestorage.googleapis.com/v0/b/news-app-bowe.appspot.com/o/source_image%2FIMG-20210531-WA0009.jpg?alt=media&token=c6325d45-9c0c-4b5f-a497-a8f9fa677b65";
+      return placeholderImage;
     }
   }
 
@@ -74,8 +74,8 @@ class UpdateAnswerState extends State<UpdateAnswer> {
     try {
       final url = API().getUrl(
           endpoint:
-              'user/updateAnswer/${authdata.userID}/$queId/$answerId?mode="update"');
-      final request = await http.post(url,
+              'answer/updateAnswer/${authdata.userID}/${widget.questionId}/${widget.answerId}?mode="update"');
+      final request = await http.put(url,
           body: json.encode(
             {
               'body': _answerController.document.toDelta(),
@@ -89,7 +89,7 @@ class UpdateAnswerState extends State<UpdateAnswer> {
       final resp = json.decode(request.body);
       final imagesend = API().getUrl(
           endpoint:
-              'user/answerImagesUpload/${authdata.userID}/$queId/$answerId?mode="update"');
+              'user/answerImagesUpload/${authdata.userID}/${widget.questionId}/${widget.answerId}?mode="update"');
       if (resp['error'] == null) {
         if (_uploadFiles.length != 0) {
           final imagereq = http.MultipartRequest('Post', imagesend);
@@ -150,7 +150,7 @@ class UpdateAnswerState extends State<UpdateAnswer> {
     }
     final url = API().getUrl(
         endpoint:
-            'user/deleteAnswer/${authdata.userID}/$queId/$answerId?mode="delete"');
+            'answer/deleteAnswer/${authdata.userID}/${widget.questionId}/${widget.answerId}?mode="delete"');
     final response = await http.delete(url, headers: {
       "Content-type": "Application/json",
       'Authorization': 'Bearer ${authdata.token}'
@@ -161,24 +161,9 @@ class UpdateAnswerState extends State<UpdateAnswer> {
   }
 
   void getAnswer() async {
-    final url =
-        API().getUrl(endpoint: 'user/getAnswer/${authdata.userID}/$answerId');
-    final response = await http.get(url, headers: {
-      "Content-type": "Application/json",
-      'Authorization': 'Bearer ${authdata.token}'
-    });
-    final result = json.decode(response.body);
-    print("==================================");
-    print(result.toString());
-    print("==================================");
-    final quillData = result['answer']['body'];
-    verifiedanswer = result['answer']['verified'] ?? false;
-    // print("==================================");
-    // print(quillData);
-    // print("==================================");
     _answerController = quill.QuillController(
         selection: TextSelection.collapsed(offset: 1),
-        document: Document.fromJson(quillData));
+        document: Document.fromDelta(widget.quilldata));
     setState(() {});
   }
 

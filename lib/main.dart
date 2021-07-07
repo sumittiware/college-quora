@@ -18,7 +18,6 @@ import 'Views/EditorScreen/texteditor.dart';
 Socket socket;
 
 void connectToServer() {
-  print("inside connect and listen");
   try {
     socket = io("http://192.168.43.220:8000", <String, dynamic>{
       'transports': ['websocket'],
@@ -72,9 +71,7 @@ class _MyAppState extends State<MyApp> {
         builder: (context, authdata, _) => MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Quora',
-          theme:
-              ThemeData(primarySwatch: Colors.orange, fontFamily: "Montserrat"),
-          // home: TabScreen(),
+          theme: ThemeData(primarySwatch: Colors.orange, fontFamily: "Roboto"),
           home: (authdata.isAuth)
               ? TabScreen()
               : FutureBuilder(
@@ -87,7 +84,6 @@ class _MyAppState extends State<MyApp> {
           routes: {
             TabScreen.routename: (ctx) => TabScreen(),
             EditQuestionPage.routename: (context) => EditQuestionPage(),
-            // "/edit": (ctx) => EditQuestionPage(),
             "/editor": (context) => EditorPage(),
             SignUPScreen.routename: (ctx) => SignUPScreen(),
             SignInScreen.routename: (ctx) => SignInScreen(),

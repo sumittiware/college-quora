@@ -22,7 +22,6 @@ class _FilterScreenState extends State<FilterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(allvalue.toString());
     // final deviceSize = MediaQuery.of(context).size;
     // final padding = MediaQuery.of(context).padding.top;
     return Scaffold(
@@ -59,7 +58,7 @@ class _FilterScreenState extends State<FilterScreen> {
                               color: ((currentValues.contains(allvalue[index])))
                                   ? Colors.white
                                   : AppColors.violet)),
-                      padding: EdgeInsets.all(12),
+                      padding: EdgeInsets.all(10),
                       decoration: BoxDecoration(
                           border: Border.all(color: AppColors.violet),
                           color: (currentValues.contains(allvalue[index]))

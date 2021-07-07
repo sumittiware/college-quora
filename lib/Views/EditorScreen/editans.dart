@@ -42,8 +42,6 @@ class EditQuestionPageState extends State<EditQuestionPage> {
     final mb = bytes / (1024 * 1024);
     String name = image.path.split('/').last;
     String end = name.split('.').last;
-    print(end);
-    print(mb);
     if (mb > 2) {
       showCustomSnackBar(context, "File is to large!!");
       return false;
@@ -75,7 +73,6 @@ class EditQuestionPageState extends State<EditQuestionPage> {
   }
 
   _selectTags(BuildContext ctx, Size size) {
-    print("here");
     showModalBottomSheet(
         context: ctx,
         builder: (ctx) {
@@ -90,9 +87,9 @@ class EditQuestionPageState extends State<EditQuestionPage> {
     });
     print(_controller.document.toDelta().toString());
     try {
-      final url = API()
-          .getUrl(endpoint: 'user/updateQuestion/${authdata.userID}/$queId');
-      final request = await http.post(url,
+      final url = API().getUrl(
+          endpoint: 'question/updateQuestion/${authdata.userID}/$queId');
+      final request = await http.put(url,
           body: json.encode(
             {
               'title': _titlecontroller.text,
@@ -107,7 +104,6 @@ class EditQuestionPageState extends State<EditQuestionPage> {
 
       final resp = json.decode(request.body);
       print(resp.toString());
-      final id = resp['questionId'];
       final imagesend = API().getUrl(
           endpoint:
               'user/questionImagesUpload/${authdata.userID}/$queId?mode="update"');

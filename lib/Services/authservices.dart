@@ -146,6 +146,8 @@ class Auth with ChangeNotifier {
         json.decode(prefs.getString('userData')) as Map<String, Object>;
     _token = extractedUserData['token'];
     _userID = extractedUserData['userID'];
+    print("TOKEN : " + _token);
+    print("UID : " + _userID);
     notifyListeners();
     return true;
   }

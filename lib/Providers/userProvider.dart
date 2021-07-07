@@ -23,7 +23,6 @@ class UserProvider with ChangeNotifier {
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
       final result = json.decode(response.body);
-      print(result.toString());
       if (result['error'] == null) {
         final imageUrl = result['user']['profileImage']['path'] ?? null;
         final user = User(
@@ -58,7 +57,7 @@ class UserProvider with ChangeNotifier {
       final mimeTypeData =
           lookupMimeType(filename, headerBytes: [0xFF, 0xD8]).split('/');
 
-      final request = http.MultipartRequest('POST', url);
+      final request = http.MultipartRequest('PUT', url);
       request.files.add(await http.MultipartFile.fromPath('image', filename,
           contentType: MediaType(mimeTypeData[0], mimeTypeData[1])));
       request.fields['username'] = username;

@@ -40,7 +40,7 @@ class EditorPageState extends State<EditorPage> {
     String end = name.split('.').last;
     print(end);
     print(mb);
-    if (mb > 2) {
+    if (mb > 1) {
       showCustomSnackBar(context, "File is to large!!");
       return false;
     }
@@ -57,7 +57,7 @@ class EditorPageState extends State<EditorPage> {
       _uploadFiles.add(givenfile);
       return givenfile.path;
     } else {
-      return "https://firebasestorage.googleapis.com/v0/b/news-app-bowe.appspot.com/o/source_image%2FIMG-20210531-WA0009.jpg?alt=media&token=c6325d45-9c0c-4b5f-a497-a8f9fa677b65";
+      return placeholderImage;
     }
   }
 
@@ -67,11 +67,9 @@ class EditorPageState extends State<EditorPage> {
   }
 
   _selectTags(BuildContext ctx, Size size) {
-    print("here");
     showDialog(
         context: ctx,
         builder: (ctx) {
-          print("here1");
           return MyDialog();
         });
   }
@@ -88,10 +86,10 @@ class EditorPageState extends State<EditorPage> {
     setState(() {
       sending = true;
     });
-    // print(_controller.document.toDelta().toString());
+    
     try {
       final url =
-          API().getUrl(endpoint: 'user/createQuestion/${authdata.userID}');
+          API().getUrl(endpoint: 'question/createQuestion/${authdata.userID}');
       final request = await http.post(url,
           body: json.encode(
             {
@@ -105,14 +103,15 @@ class EditorPageState extends State<EditorPage> {
             'Authorization': 'Bearer ${authdata.token}'
           });
       filters.clearTags();
-
       final resp = json.decode(request.body);
       print(resp.toString());
-      final id = resp['questionId'];
-      final imagesend = API().getUrl(
-          endpoint:
-              'user/questionImagesUpload/${authdata.userID}/$id?mode="create"');
       if (resp['error'] == null) {
+        final id = resp['questionId'];
+        print("point1");
+        final imagesend = API().getUrl(
+            endpoint:
+                'question/questionImagesUpload/${authdata.userID}/$id?mode="create"');
+
         if (_uploadFiles.length != 0) {
           final imagereq = http.MultipartRequest('Post', imagesend);
           for (int i = 0; i < _uploadFiles.length; i++) {
@@ -136,12 +135,13 @@ class EditorPageState extends State<EditorPage> {
               sending = false;
             });
             showCustomSnackBar(context, "Question Created Successfully");
+            _uploadFiles.clear();
             return respimg['questionId'].toString();
           } else {
             setState(() {
               sending = false;
             });
-            showCustomSnackBar(context, resp['message']);
+            showCustomSnackBar(context, respimg['message']);
             throw respimg['message'];
           }
         }
@@ -161,6 +161,7 @@ class EditorPageState extends State<EditorPage> {
       setState(() {
         sending = false;
       });
+      print(e.toString());
       showCustomSnackBar(context, e.toString());
     }
   }

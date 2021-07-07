@@ -33,7 +33,7 @@ class Filter with ChangeNotifier {
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
       final result = json.decode(response.body);
-      print(result);
+
       if (result['error'] == null) {
         _filters = result['tags'];
         notifyListeners();
@@ -69,7 +69,10 @@ class Filter with ChangeNotifier {
   createTag(String newtags) {
     _createdTags = newtags.split(",");
     _createdTags.forEach((element) {
-      if (!_filters.contains(element)) _filters.add(element.trim());
+      final tag = element.trim();
+      if (tag != "") {
+        if (!_filters.contains(tag)) _filters.add(tag);
+      }
     });
     notifyListeners();
   }

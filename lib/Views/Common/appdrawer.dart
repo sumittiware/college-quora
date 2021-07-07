@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:quora/Configurations/sharing.dart';
 import 'package:quora/Providers/userProvider.dart';
 import 'package:quora/Services/authservices.dart';
+import 'package:quora/Views/BookMarks/bookmarkscreen.dart';
 import 'package:quora/Views/Profile/profilepage.dart';
+import 'package:quora/Views/Settings/settingscreen.dart';
 import 'package:quora/styles/colors.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -52,15 +54,18 @@ class AppDrawer extends StatelessWidget {
             SizedBox(
               height: 4,
             ),
-            _drawerTile(context, Icons.account_circle_outlined, "Profile"),
+            _drawerTile(context, Icons.account_circle_outlined, "Profile",
+                ProfilePage()),
             SizedBox(
               height: 4,
             ),
-            _drawerTile(context, Icons.bookmark_outline_rounded, "Bookmarks"),
+            _drawerTile(context, Icons.bookmark_outline_rounded, "Bookmarks",
+                BookMarksScreen()),
             SizedBox(
               height: 4,
             ),
-            _drawerTile(context, Icons.settings_outlined, "Settings"),
+            _drawerTile(
+                context, Icons.settings_outlined, "Settings", SettingScreen()),
             Spacer(),
             Container(
               height: 0.5,
@@ -118,11 +123,12 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  ListTile _drawerTile(BuildContext context, IconData icon, String title) {
+  ListTile _drawerTile(
+      BuildContext context, IconData icon, String title, Widget navigateTo) {
     return ListTile(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(builder: (_) {
-          return ProfilePage();
+          return navigateTo;
         }));
       },
       leading: Icon(icon),
