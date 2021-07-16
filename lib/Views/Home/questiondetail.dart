@@ -10,6 +10,7 @@ import 'package:quora/Models/bookmark.dart';
 import 'package:quora/Models/question.dart';
 import 'package:quora/Providers/feedsprovider.dart';
 import 'package:quora/Services/authservices.dart';
+import 'package:quora/Views/Common/commentcontroller.dart';
 import 'package:quora/Views/Common/error.dart';
 import 'package:quora/Views/Common/heading.dart';
 import 'package:quora/Views/Common/showmessage.dart';
@@ -32,6 +33,9 @@ class QuestionDetailScreen extends StatefulWidget {
 class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
   bool _isLiked = false;
   bool _isDisliked = false;
+
+  final _panel = PanelController();
+  final _commentController = TextEditingController();
 
   quill.QuillController _controller;
   final scrollController = ScrollController();
@@ -81,8 +85,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
   }
 
   toogleUpvote() {
-    final url = API()
-        .getUrl(endpoint: "user/updateQuestionVote/${_question.id}?type=up");
+    final url = API().getUrl(
+        endpoint: "question/updateQuestionVote/${_question.id}?type=up");
     http.put(url,
         body: json.encode({
           "userId": authdata.userID,
@@ -90,7 +94,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
           "downVote": _isDisliked
         }),
         headers: {
-          "Content-type": "Application/json",
+          "Content-type": "application/json",
           'Authorization': 'Bearer ${authdata.token}'
         }).then((response) {
       final result = json.decode(response.body);
@@ -111,8 +115,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
   }
 
   toogleDownvote() {
-    final url = API()
-        .getUrl(endpoint: "user/updateQuestionVote/${_question.id}?type=down");
+    final url = API().getUrl(
+        endpoint: "question/updateQuestionVote/${_question.id}?type=down");
     http.put(url,
         body: json.encode({
           "userId": authdata.userID,
@@ -192,11 +196,20 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      _question.creator.username,
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          _question.creator.name,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        if (_question.creator.id !=
+                                            authdata.userID)
+                                          TextButton(
+                                              onPressed: () {},
+                                              child: Text("Follow"))
+                                      ],
                                     ),
                                     Text(format.format(
                                         DateTime.parse(_question.createdAt)))
@@ -270,7 +283,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                           AnswerWidget(
                                               questionID: _question.id,
                                               question: _question.title,
-                                              answer: _question.answers[index]),
+                                              answer: _question.answers[index],
+                                              fromFeeds: widget.fromFeeds),
                                           Container(
                                             padding: EdgeInsets.symmetric(
                                                 vertical: 12),
@@ -287,6 +301,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           ]),
                     ),
                   ),
+                  controller: _panel,
                   minHeight: 70,
                   maxHeight: _deviceSize.height * 0.5,
                   panel: Container(
@@ -311,8 +326,13 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                             : Icons.thumb_down_outlined,
                                         _question.downVote.length.toString(),
                                         toogleDownvote),
-                                    _buildButton(Icons.add_comment_rounded,
-                                        "Comment", () {}),
+                                    _buildButton(
+                                        Icons.add_comment_rounded, "Comment",
+                                        () {
+                                      setState(() {
+                                        _panel.open();
+                                      });
+                                    }),
                                     _buildButton(Icons.edit, "Answer", () {
                                       Navigator.of(context).push(
                                           MaterialPageRoute(builder: (context) {
@@ -330,6 +350,69 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                 "Comments",
                                 style: TextStyle(
                                     fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                      child: TextField(
+                                    controller: _commentController,
+                                    textCapitalization:
+                                        TextCapitalization.sentences,
+                                    autocorrect: true,
+                                    enableSuggestions: true,
+                                    decoration: InputDecoration(
+                                        hintText: 'Add Comment',
+                                        hintStyle: TextStyle(
+                                            color:
+                                                Theme.of(context).primaryColor),
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Theme.of(context)
+                                                    .primaryColor),
+                                            borderRadius:
+                                                BorderRadius.circular(30))),
+                                  )),
+                                  FloatingActionButton(
+                                      elevation: 0,
+                                      child: Icon(Icons.send),
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      onPressed: () {
+                                        final url = API().getUrl(
+                                            endpoint:
+                                                "question/addComment/${_question.id}");
+                                        print("URL : " + url.toString());
+                                        http.post(url,
+                                            body: json.encode(
+                                              {
+                                                "text": _commentController.text,
+                                                "user": authdata.userID
+                                              },
+                                            ),
+                                            headers: {
+                                              "Content-type":
+                                                  "application/json",
+                                              'Authorization':
+                                                  'Bearer ${authdata.token}'
+                                            }).then((result) {
+                                          showCustomSnackBar(
+                                              context, result.body);
+                                        }).catchError((err) {
+                                          showCustomSnackBar(context, err);
+                                        });
+                                      })
+                                ],
+                              ),
+                              SingleChildScrollView(
+                                child: Column(
+                                  children: List.generate(
+                                      _question.comments.length, (index) {
+                                    return Text(_question.comments[index].text);
+                                  }),
+                                ),
                               )
                             ],
                           ),

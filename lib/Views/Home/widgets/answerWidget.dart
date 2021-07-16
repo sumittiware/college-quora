@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:quora/Configurations/apiConfig.dart';
 import 'package:quora/Models/answer.dart';
+import 'package:quora/Models/bookmark.dart';
+import 'package:quora/Models/user.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/Views/EditorScreen/updateanswer.dart';
@@ -17,7 +19,8 @@ class AnswerWidget extends StatefulWidget {
   final String questionID;
   final String question;
   final Answer answer;
-  AnswerWidget({this.questionID, this.question, this.answer});
+  final bool fromFeeds;
+  AnswerWidget({this.questionID, this.question, this.answer, this.fromFeeds});
   @override
   _AnswerWidgetState createState() => _AnswerWidgetState();
 }
@@ -88,7 +91,7 @@ class _AnswerWidgetState extends State<AnswerWidget> {
         endpoint:
             'answer/deleteAnswer/${authdata.userID}/${widget.questionID}/${widget.answer.id}?mode="delete"');
     final response = await http.delete(url, headers: {
-      "Content-type": "Application/json",
+      "Content-type": "application/json",
       'Authorization': 'Bearer ${authdata.token}'
     });
     final result = json.decode(response.body);
@@ -115,9 +118,25 @@ class _AnswerWidgetState extends State<AnswerWidget> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.answer.creator.username,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      Text(
+                        widget.answer.creator.name,
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      if (widget.answer.creator.id != authdata.userID)
+                        TextButton(
+                            onPressed: () {
+                              followUser(widget.answer.creator.id, authdata)
+                                  .then((value) {
+                                showCustomSnackBar(context, value);
+                              }).catchError((error) {
+                                showCustomSnackBar(context, error);
+                              });
+                            },
+                            child: Text("Follow"))
+                    ],
                   ),
                   Text(format.format(DateTime.parse(widget.answer.createdAt)))
                 ],
@@ -178,10 +197,19 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                 widget.answer.downVotes.length.toString(),
                 toogleDownvote),
             _buildButton(Icons.add_comment_rounded, "Comment", () {}),
-            _buildButton(
-                (_isLiked) ? Icons.thumb_up : Icons.bookmark_add_rounded,
-                "Bookmark",
-                _addBookmark),
+            (widget.fromFeeds)
+                ? _buildButton(
+                    Icons.bookmark_add_rounded, "Bookmark", _addBookmark)
+                : _buildButton(Icons.bookmark_remove_rounded, "Remove Bookmark",
+                    () {
+                    deleteBookMark(
+                            authdata, widget.questionID, [widget.answer.id])
+                        .then((value) {
+                      showCustomSnackBar(context, value);
+                    }).catchError((error) {
+                      showCustomSnackBar(context, error);
+                    });
+                  }),
           ])
         ],
       ),

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:provider/provider.dart';
 import 'package:quora/Configurations/apiConfig.dart';
 import 'package:quora/Models/question.dart';
 import 'package:quora/Models/user.dart';
@@ -25,7 +24,7 @@ getBooksMarks(Auth authdata) async {
   final response = await http
       .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
   final result = json.decode(response.body);
-
+  print("result : " + result.toString());
   if (result['error'] == null) {
     final bookMark = result['bookmarks'] as List<dynamic>;
     bookMark.forEach((element) {
@@ -61,6 +60,7 @@ Future<String> deleteBookMark(
     }
   } catch (e) {
     print(e.toString());
+    throw e.toString();
   }
 }
 
@@ -71,29 +71,28 @@ Future<Question> fetchBookMark(Auth authdata, String questionID) async {
             'user/getSpecificQuestionBookmark/${authdata.userID}?questionId=$questionID');
     final response = await http
         .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
-    final result = json.decode(response.body);
-    print(result);
+    final result = json.decode(response.body) as Map<String, dynamic>;
+    final rawBookmark = result['selectedBookmark'];
+    print("RAW BOOK MARK : " + rawBookmark.toString());
     Question question;
     if (result['error'] == null) {
       try {
         var body = Delta();
-        // result['selectedBookmark']['body'].forEach((element) {
-        //   body.insert(element['insert'], element['attributes']);
-        // });
+        rawBookmark['question']['body'].forEach((element) {
+          body.insert(element['insert'], element['attributes']);
+        });
         question = Question(
-            id: result['selectedBookmark']['_id'],
-            title: result['selectedBookmark']['title'],
+            id: rawBookmark['question']['_id'],
+            title: rawBookmark['question']['title'],
             body: body,
-            tags: result['selectedBookmark']['tags'],
-            upVote: result['selectedBookmark']['upVote'],
-            answers: List.generate(
-                result['selectedBookmark']['answers'].length,
-                (index) => answerfromJSON(
-                    result['selectedBookmark']['answers'][index])),
-            creator: userfromQNAJSON(result['selectedBookmark']['user']),
-            views: result['selectedBookmark']['Views'],
-            downVote: result['selectedBookmark']['downVote'],
-            createdAt: result['question']['createdAt']);
+            tags: rawBookmark['question']['tags'],
+            upVote: rawBookmark['question']['upVote'],
+            answers: List.generate(rawBookmark['answers'].length,
+                (index) => answerfromJSON(rawBookmark['answers'][index])),
+            creator: userfromQNAJSON(rawBookmark['question']['user']),
+            views: rawBookmark['question']['Views'],
+            downVote: rawBookmark['question']['downVote'],
+            createdAt: rawBookmark['question']['createdAt']);
         return question;
       } catch (e) {
         throw e.toString();

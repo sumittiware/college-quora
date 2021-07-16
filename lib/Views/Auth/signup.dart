@@ -46,7 +46,7 @@ class _SignUPScreenState extends State<SignUPScreen> {
         });
         Provider.of<Auth>(context, listen: false)
             .signUp(
-          username: _usernameController.text,
+          name: _usernameController.text,
           email: _emailController.text,
           password: _passwordController.text,
         )
@@ -137,7 +137,7 @@ class _SignUPScreenState extends State<SignUPScreen> {
                               focusedBorder: UnderlineInputBorder(
                                   borderSide:
                                       BorderSide(color: AppColors.violet)),
-                              labelText: "Username",
+                              labelText: "Name",
                               labelStyle: TextStyle(color: AppColors.orange)),
                         ),
                       ),

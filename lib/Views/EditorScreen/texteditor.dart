@@ -17,7 +17,7 @@ import 'package:quora/Views/EditorScreen/Widgets/dialog.dart';
 import 'package:quora/main.dart';
 import 'package:quora/styles/colors.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_quill/flutter_quill.dart' as quill;
+// import 'package:flutter_quill/flutter_quill.dart' as quill;
 
 class EditorPage extends StatefulWidget {
   @override
@@ -77,16 +77,19 @@ class EditorPageState extends State<EditorPage> {
   _submitQuestion() async {
     final filters = Provider.of<Filter>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false).appuser;
+    connectToServer();
     socket.emit("addTag", {
-      "username": user.username,
+      "username": user.username ?? " ",
+      "name": user.name,
       "profileImage": user.imageURl ?? null,
       "tags": filters.createdTags
     });
+    socket.disconnect();
 
     setState(() {
       sending = true;
     });
-    
+
     try {
       final url =
           API().getUrl(endpoint: 'question/createQuestion/${authdata.userID}');

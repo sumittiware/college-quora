@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:quora/Configurations/apiConfig.dart';
 import 'package:quora/Configurations/googleauthconfig.dart';
+import 'package:quora/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
@@ -26,15 +27,15 @@ class Auth with ChangeNotifier {
   }
 
   Future<String> signUp({
-    String username,
+    String name,
     String email,
     String password,
   }) async {
     final url = API().getUrl(endpoint: "auth/signup");
     try {
       final response = await http.post(url,
-          body: json.encode(
-              {"username": username, "email": email, "password": password}),
+          body:
+              json.encode({"name": name, "email": email, "password": password}),
           headers: {
             "Content-type": "application/json",
             "Accept": "application/json"
@@ -72,8 +73,11 @@ class Auth with ChangeNotifier {
 
       final url = API().getUrl(endpoint: "auth/googleLogin");
       final response = await http.post(url,
-          body: json.encode(
-              {'id_token': result.idToken, 'access_token': result.accessToken}),
+          body: json.encode({
+            'id_token': result.idToken,
+            'access_token': result.accessToken,
+            'firebaseToken': fcmToken
+          }),
           headers: {
             "Content-type": "application/json",
             "Accept": "application/json"
@@ -109,7 +113,7 @@ class Auth with ChangeNotifier {
     try {
       final response = await http.post(url,
           body: json.encode(
-            {'email': email, 'password': password},
+            {'email': email, 'password': password, 'firebaseToken': fcmToken},
           ),
           headers: {
             "Content-type": "application/json",

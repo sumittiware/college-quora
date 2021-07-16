@@ -91,7 +91,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              snapshot.data.username ?? "none",
+                                              snapshot.data.name ?? "none",
                                               style: TextStyle(fontSize: 20),
                                             ),
                                             OutlinedButton(

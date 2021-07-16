@@ -76,7 +76,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() {
         appuser = userdata;
         _collegeController.text = appuser.college;
-        _nameController.text = appuser.username;
+        _nameController.text = appuser.name;
         selectedYear = appuser.year;
         selectedBranch = appuser.branch;
         imageUrl = appuser.imageURl;

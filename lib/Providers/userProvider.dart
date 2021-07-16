@@ -22,20 +22,24 @@ class UserProvider with ChangeNotifier {
       final url = API().getUrl(endpoint: 'user/getUser/${authdata.userID}');
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
-      final result = json.decode(response.body);
+      final result = json.decode(response.body) as Map<String, dynamic>;
+      final appuser = result['user'];
+      // print(appuser.toString());
       if (result['error'] == null) {
-        final imageUrl = result['user']['profileImage']['path'] ?? null;
+        final imageUrl = appuser['profileImage']['path'] ?? null;
         final user = User(
-            college: result['user']['college'],
-            branch: result['user']['branch'],
-            year: result['user']['year'],
-            contact: result['user']['contact'],
-            username: result['user']['username'],
-            email: result['user']['email'],
-            emailverified: result['user']['emailVerify'],
-            numberverified: result['user']['numberVerify'],
-            createdDate: result['user']['createdAt'],
-            imageURl: imageUrl);
+            college: appuser['college'],
+            branch: appuser['branch'],
+            year: appuser['year'],
+            contact: appuser['contact'],
+            name: appuser['name'],
+            email: appuser['email'],
+            emailverified: appuser['emailVerify'],
+            numberverified: appuser['numberVerify'],
+            createdDate: appuser['createdAt'],
+            imageURl: imageUrl,
+            followers: appuser['followers'],
+            following: appuser['followings']);
         _appuser = user;
         notifyListeners();
         return user;
@@ -48,7 +52,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<String> updateUser(Auth authdata, File userimage, String username,
+  Future<String> updateUser(Auth authdata, File userimage, String name,
       String selectedBranch, String selectedYear, String collegename) async {
     try {
       final url =
@@ -60,7 +64,7 @@ class UserProvider with ChangeNotifier {
       final request = http.MultipartRequest('PUT', url);
       request.files.add(await http.MultipartFile.fromPath('image', filename,
           contentType: MediaType(mimeTypeData[0], mimeTypeData[1])));
-      request.fields['username'] = username;
+      request.fields['name'] = name;
       request.fields['branch'] = selectedBranch;
       request.fields['year'] = selectedYear;
       request.fields['college'] = collegename;

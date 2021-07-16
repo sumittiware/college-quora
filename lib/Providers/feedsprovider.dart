@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:quora/Configurations/apiConfig.dart';
 import 'package:quora/Configurations/string.dart';
 import 'package:quora/Models/answer.dart';
+import 'package:quora/Models/comment.dart';
 import 'package:quora/Models/question.dart';
 import 'package:quora/Models/user.dart';
 import 'package:quora/Services/authservices.dart';
@@ -24,7 +25,7 @@ class MyFeeds with ChangeNotifier {
       final response = await http
           .get(url, headers: {'Authorization': 'Bearer ${authdata.token}'});
       final result = json.decode(response.body);
-      print(result);
+      print(result.toString());
       Question question;
       if (result['error'] == null) {
         try {
@@ -43,6 +44,12 @@ class MyFeeds with ChangeNotifier {
                   (index) =>
                       answerfromJSON(result['question']['answers'][index])),
               creator: userfromQNAJSON(result['question']['user']),
+              comments: [],
+              //  List.generate(
+              //         result['question']['comments'].length,
+              //         (index) => commentFromJson(
+              //             result['question']['comments'][index])) ??
+              //     [],
               views: result['question']['Views'],
               downVote: result['question']['downVote'],
               createdAt: result['question']['createdAt']);

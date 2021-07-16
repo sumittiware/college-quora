@@ -38,7 +38,7 @@ class AppDrawer extends StatelessWidget {
                           : AssetImage('assets/images/user.jpg'),
                     ),
                     Text(
-                      user.username,
+                      user.name,
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     )

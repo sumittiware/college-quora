@@ -16,7 +16,6 @@ import 'package:quora/Configurations/apiConfig.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/Views/Common/tabscreen.dart';
-import 'package:quora/Views/Home/homescreen.dart';
 import 'package:quora/styles/colors.dart';
 
 class CompleteYourProfile extends StatefulWidget {
@@ -32,6 +31,7 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
   File _userImageFile;
   String selectedYear = "None";
   String selectedBranch = "None";
+  final _usernamecontroller = TextEditingController();
   final _phonenocoltroller = TextEditingController();
   final _collegeController = TextEditingController();
 
@@ -63,6 +63,7 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
     final request = http.MultipartRequest('POST', url);
     request.files.add(await http.MultipartFile.fromPath('image', filename,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1])));
+    request.fields['username'] = _usernamecontroller.text;
     request.fields['branch'] = selectedBranch;
     request.fields['year'] = selectedYear;
     request.fields['contact'] = _phonenocoltroller.text;
@@ -77,11 +78,15 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
       isSubmitting = false;
     });
     final resp = json.decode(response.body);
-    showCustomSnackBar(context, resp['message']);
-    print(resp['message']);
-    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) {
-      return TabScreen();
-    }));
+    if (resp['error'] == null) {
+      showCustomSnackBar(context, resp['message']);
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) {
+        return TabScreen();
+      }));
+    } else {
+      showCustomSnackBar(context, resp['message']);
+    }
   }
 
   void _pickImage() async {
@@ -120,7 +125,7 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
             Container(
               padding: EdgeInsets.symmetric(horizontal: 12),
               height: _height - (_clipone + _cliptwo),
-              child: Column(
+              child: ListView(
                 children: [
                   SizedBox(
                       height: _height * 0.07,
@@ -154,6 +159,21 @@ class _CompleteYourProfileState extends State<CompleteYourProfile> {
                           borderRadius: BorderRadius.circular(75),
                           border: Border.all(color: AppColors.violet)),
                     ),
+                  ),
+                  TextField(
+                    controller: _usernamecontroller,
+                    // keyboardType: TextInputType.phone,
+                    // maxLength: 10,
+                    decoration: InputDecoration(
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.violet)),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: AppColors.orange)),
+                        // prefixText: "+91",
+                        border: UnderlineInputBorder(),
+                        labelText: "username",
+                        labelStyle:
+                            TextStyle(color: AppColors.orange, fontSize: 17)),
                   ),
                   TextField(
                     controller: _phonenocoltroller,

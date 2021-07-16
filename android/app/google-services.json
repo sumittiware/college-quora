@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "843499986806",
+    "project_id": "quora-313910",
+    "storage_bucket": "quora-313910.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:843499986806:android:429c2648609e5a65c76457",
+        "android_client_info": {
+          "package_name": "com.college.quora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "843499986806-kreq3imiuf483ecpqr7t5tu1jjlfa953.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.college.quora",
+            "certificate_hash": "5edbda1e6183775ea2cf5121f017747e03e1347b"
+          }
+        },
+        {
+          "client_id": "843499986806-72j89vmia8efvnbr2leq9aunjfinr4p3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHeCLmUuBKCqB80OvdSYLLVr_pEpb0Cw8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "843499986806-72j89vmia8efvnbr2leq9aunjfinr4p3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

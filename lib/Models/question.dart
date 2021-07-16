@@ -1,5 +1,6 @@
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:quora/Models/answer.dart';
+import 'package:quora/Models/comment.dart';
 import 'package:quora/Models/user.dart';
 
 // TODO : adding user remaining!!!
@@ -12,6 +13,7 @@ class Question {
   List<dynamic> upVote;
   List<dynamic> downVote;
   List<Answer> answers;
+  List<Comment> comments;
   User creator;
   int views;
   Question(
@@ -24,5 +26,6 @@ class Question {
       this.creator,
       this.answers,
       this.views,
-      this.createdAt});
+      this.createdAt,
+      this.comments});
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 // import 'package:flutter_quill/models/documents/nodes/container.dart' as quill;
 import 'package:provider/provider.dart';
 import 'package:quora/Models/bookmark.dart';
-import 'package:quora/Models/question.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/Views/Home/questiondetail.dart';
@@ -22,6 +21,7 @@ class _BookMarksScreenState extends State<BookMarksScreen> {
     authdata = Provider.of<Auth>(context, listen: false);
     print("Bookmarkinitstate");
     getBooksMarks(authdata).then((value) {
+      print("Value : " + value.toString());
       _booksmarks = value;
       _isLoading = false;
       setState(() {});
@@ -95,7 +95,7 @@ class _BookMarksScreenState extends State<BookMarksScreen> {
                                           width: 8,
                                         ),
                                         Text(
-                                          _booksmarks[index].user.username,
+                                          _booksmarks[index].user.name,
                                           style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold),
