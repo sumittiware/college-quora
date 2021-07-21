@@ -15,7 +15,7 @@ class Question {
   List<Answer> answers;
   List<Comment> comments;
   User creator;
-  int views;
+  List<dynamic> views;
   Question(
       {this.id,
       this.title,

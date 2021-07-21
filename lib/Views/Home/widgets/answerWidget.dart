@@ -159,7 +159,7 @@ class _AnswerWidgetState extends State<AnswerWidget> {
                         },
                         icon: Icon(Icons.edit, color: AppColors.violet)),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: _deleteAnswer,
                         icon: Icon(Icons.delete, color: AppColors.violet))
                   ],
                 )

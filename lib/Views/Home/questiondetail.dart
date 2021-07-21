@@ -167,7 +167,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
             Navigator.pop(context);
           },
         ),
-        title: Text("Question Detail"),
+        title: Text((widget.fromFeeds) ? "Question Detail" : "Bookmarked"),
         backgroundColor: AppColors.orange,
       ),
       body: (isLoading)
@@ -234,7 +234,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                           icon: Icon(Icons.edit,
                                               color: AppColors.violet)),
                                       IconButton(
-                                          onPressed: () {},
+                                          onPressed: _deleteQuestion,
                                           icon: Icon(Icons.delete,
                                               color: AppColors.violet))
                                     ],

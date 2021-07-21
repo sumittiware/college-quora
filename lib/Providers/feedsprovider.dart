@@ -37,12 +37,13 @@ class MyFeeds with ChangeNotifier {
               id: result['question']['_id'],
               title: result['question']['title'],
               body: body,
-              tags: result['question']['tags'],
-              upVote: result['question']['upVote'],
+              tags: result['question']['tags'] ?? [],
+              upVote: result['question']['upVote'] ?? [],
               answers: List.generate(
-                  result['question']['answers'].length,
-                  (index) =>
-                      answerfromJSON(result['question']['answers'][index])),
+                      result['question']['answers'].length,
+                      (index) => answerfromJSON(
+                          result['question']['answers'][index])) ??
+                  [],
               creator: userfromQNAJSON(result['question']['user']),
               comments: [],
               //  List.generate(
@@ -50,8 +51,8 @@ class MyFeeds with ChangeNotifier {
               //         (index) => commentFromJson(
               //             result['question']['comments'][index])) ??
               //     [],
-              views: result['question']['Views'],
-              downVote: result['question']['downVote'],
+              views: result['question']['Views'] ?? [],
+              downVote: result['question']['downVote'] ?? [],
               createdAt: result['question']['createdAt']);
           return question;
         } catch (e) {

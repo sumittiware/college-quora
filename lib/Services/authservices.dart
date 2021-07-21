@@ -35,7 +35,7 @@ class Auth with ChangeNotifier {
     try {
       final response = await http.post(url,
           body:
-              json.encode({"name": name, "email": email, "password": password}),
+              json.encode({"name": name, "email": email, "password": password,'firebaseToken': fcmToken}),
           headers: {
             "Content-type": "application/json",
             "Accept": "application/json"

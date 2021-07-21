@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'dart:io';
 // Flutter imports
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:flutter_svg/flutter_svg.dart';

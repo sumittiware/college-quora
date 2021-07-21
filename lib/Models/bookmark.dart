@@ -82,16 +82,18 @@ Future<Question> fetchBookMark(Auth authdata, String questionID) async {
           body.insert(element['insert'], element['attributes']);
         });
         question = Question(
+            comments: [],
             id: rawBookmark['question']['_id'],
             title: rawBookmark['question']['title'],
             body: body,
-            tags: rawBookmark['question']['tags'],
-            upVote: rawBookmark['question']['upVote'],
+            tags: rawBookmark['question']['tags'] ?? [],
+            upVote: rawBookmark['question']['upVote'] ?? [],
             answers: List.generate(rawBookmark['answers'].length,
-                (index) => answerfromJSON(rawBookmark['answers'][index])),
+                    (index) => answerfromJSON(rawBookmark['answers'][index])) ??
+                [],
             creator: userfromQNAJSON(rawBookmark['question']['user']),
-            views: rawBookmark['question']['Views'],
-            downVote: rawBookmark['question']['downVote'],
+            views: rawBookmark['question']['Views'] ?? [],
+            downVote: rawBookmark['question']['downVote'] ?? [],
             createdAt: rawBookmark['question']['createdAt']);
         return question;
       } catch (e) {

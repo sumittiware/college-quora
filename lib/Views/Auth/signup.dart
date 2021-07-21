@@ -1,4 +1,3 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Auth/completeprofile.dart';
 import 'package:quora/Views/Auth/signin.dart';
+import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/styles/colors.dart';
 
 class SignUPScreen extends StatefulWidget {
@@ -27,13 +27,7 @@ class _SignUPScreenState extends State<SignUPScreen> {
   bool _obscure = true;
 
   _showCustomSnackBar(String message) {
-    Flushbar(
-        padding: EdgeInsets.all(20),
-        margin: EdgeInsets.all(12),
-        borderRadius: 10,
-        duration: Duration(seconds: 5),
-        message: message)
-      ..show(context);
+    showCustomSnackBar(context, message);
   }
 
   _submitform() {

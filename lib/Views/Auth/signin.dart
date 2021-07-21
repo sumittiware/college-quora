@@ -1,4 +1,3 @@
-import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:quora/Services/authservices.dart';
 import 'package:quora/Views/Auth/completeprofile.dart';
 import 'package:quora/Views/Auth/signup.dart';
+import 'package:quora/Views/Common/showmessage.dart';
 import 'package:quora/Views/Common/tabscreen.dart';
 import 'package:quora/Views/Home/homescreen.dart';
 import 'package:quora/styles/colors.dart';
@@ -28,13 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
   bool _obscure = false;
 
   _showCustomSnackBar(String message) {
-    Flushbar(
-        padding: EdgeInsets.all(20),
-        margin: EdgeInsets.all(12),
-        duration: Duration(seconds: 5),
-        borderRadius: 10,
-        message: message)
-      ..show(context);
+    showCustomSnackBar(context, message);
   }
 
   _submitform() {

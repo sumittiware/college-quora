@@ -8,6 +8,7 @@ import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:mime/mime.dart';
 import 'package:provider/provider.dart';
 import 'package:quora/Configurations/apiConfig.dart';
+import 'package:quora/Configurations/questionData.dart';
 import 'package:quora/Configurations/string.dart';
 import 'package:quora/Providers/filter.dart';
 import 'package:quora/Providers/userProvider.dart';
@@ -137,6 +138,7 @@ class EditorPageState extends State<EditorPage> {
             setState(() {
               sending = false;
             });
+            writetoFile(id);
             showCustomSnackBar(context, "Question Created Successfully");
             _uploadFiles.clear();
             return respimg['questionId'].toString();

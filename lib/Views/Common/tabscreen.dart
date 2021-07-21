@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_quill/models/documents/nodes/container.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
+import 'package:quora/Configurations/questionData.dart';
 import 'package:quora/Providers/appproviders.dart';
 import 'package:quora/Providers/filter.dart';
 import 'package:quora/Providers/userProvider.dart';
@@ -26,6 +27,7 @@ class _TabScreenState extends State<TabScreen> {
   Auth authdata;
   @override
   void initState() {
+    readfromFile();
     authdata = Provider.of<Auth>(context, listen: false);
     Provider.of<Filter>(context, listen: false).fetchTags(authdata);
     Provider.of<UserProvider>(context, listen: false).getUser(authdata);
